@@ -29,7 +29,8 @@
 		"start": "react-scripts start",
 		"build": "rm -rf dist && react-scripts build && mv build dist",
 		"test": "react-scripts test --env=jsdom",
-		"eject": "react-scripts eject"
+		"eject": "react-scripts eject",
+		"build-desktop": "rm -rf package/ && npm run build && mkdir package && cp -rt package/ dist/ package.json && tar -czvf traveling_spaniard.tar.gz package/ "
 	},
 	"files": [
 		"dist/",
