@@ -44,6 +44,13 @@ export default {
         }
       });
     }
+    else{
+      driver = createDriver(
+        process.env.REACT_APP_NEO4J_URI  || "bolt://localhost:768",
+        process.env.REACT_APP_NEO4J_USER || "neo4j",
+        process.env.REACT_APP_NEO4J_PASS || "neo"
+      );
+    }
     return driver;
   },
 
