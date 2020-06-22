@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
+import {connect} from 'react-redux';
 import Accordion from 'react-bootstrap/Accordion';
 import Layer from './layers/Layer';
-import {connect} from 'react-redux';
 
 class SideBar extends Component {
 
@@ -13,9 +13,13 @@ class SideBar extends Component {
 		);
 	};
 
+
+
 	render() {
+		console.log(this.props)
 		return (
 			<Accordion>
+				<button onClick={() => console.table(this.props)} />
 				{this.renderNewLayer()}
 			</Accordion>
 		);
@@ -23,4 +27,12 @@ class SideBar extends Component {
 }
 
 
-export default SideBar;
+const mapStateToProps = (state, ownProps) => {
+	return {
+		ui: state.ui,
+		...ownProps
+	}
+};
+
+
+export default connect(mapStateToProps)(SideBar);

@@ -5,6 +5,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux';
 import neo4jService from '../services/neo4jService';
+import {setSelectedItem} from "../actions";
 
 import L from 'leaflet';
 import 'leaflet.heat';
@@ -161,7 +162,7 @@ class Map extends Component {
 }
 
 	circleClick(e){
-		
+		console.log('circleClickFire');
 		const originalColor = "rgb(0, 0, 255)"
 		const selectedColor = "rgb(255, 0, 0)"
 
@@ -171,20 +172,23 @@ class Map extends Component {
 			e.target.options.color = selectedColor
 			e.target.options.fillColor = selectedColor
 			// add the selected monument to state
-			this.setState(prevState => ({
-				selected: [...prevState.selected, title]
-			  }))
+			// this.setState(prevState => ({
+			// 	selected: [...prevState.selected, title]
+			// 	}))
+				
+			this.props.setSelectedItem([...this.props.ui.selectedItem, title])
 		}
 		else{
 			// color the marker
 			e.target.options.color = originalColor
 			e.target.options.fillColor = originalColor
 			// remove the selected monument from state
-			this.setState(prevState => ({     	
-				selected: prevState.selected.filter(selected => selected !== title)     
-			}));
+			// this.setState(prevState => ({     	
+			// 	selected: prevState.selected.filter(selected => selected !== title)     
+			// }));
+			this.props.setSelectedItem(this.props.ui.selectedItem.filter(selected => selected !== title) )
 		}
-		console.log(this.state.selected)
+		console.log(this.props.ui.selectedItem)
 	}
 
 	updatePolylineLayer(data, color, ukey) {
@@ -239,7 +243,14 @@ class Map extends Component {
 
 
 	render() {
+		console.log(this.props);
 		return <div id="map"></div>;
+	}
+}
+
+const mapDispatchToProps = dispatch => {
+	return {
+	  setSelectedItem: (selected) => dispatch(setSelectedItem(selected)),
 	}
 }
 
@@ -247,9 +258,10 @@ class Map extends Component {
 const mapStateToProps = (state, ownProps) => {
 	return {
 		layers: state.layers,
+		ui: state.ui,
 		...ownProps
 	}
 };
 
 
-export default connect(mapStateToProps)(Map);
+export default connect(mapStateToProps, mapDispatchToProps)(Map);
