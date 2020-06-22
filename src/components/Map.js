@@ -105,7 +105,10 @@ class Map extends Component {
 		const query = `
 		MATCH (n:Monument)
 		RETURN n.location_point.y as latitude, n.location_point.x as longitude, 
-		{name:n.name, url:n.img, architecture:[(n)-[:ARCHITECTURE]->(b) | b.name][0]} as tooltip
+			{title: n.name, 
+			 url: n.img, 
+			 architecture: [(n)-[:ARCHITECTURE]->(b) | b.name][0],
+			 id: toString(id(n))} as tooltip
 		LIMIT 10000
 		`
 		let m = null;
@@ -116,7 +119,8 @@ class Map extends Component {
 			m = L.circleMarker(
 				entry.pos,
 				{
-					title: entry.tooltip.name,
+					title: entry.tooltip.title,
+					id: entry.tooltip.id,
 					fill: true,
 					radius: 5,
 					color: rgbColor,
@@ -139,7 +143,7 @@ class Map extends Component {
 		const originalColor = "rgb(0, 0, 255)"
 		const selectedColor = "rgb(255, 0, 0)"
 
-		let title = e.target.options.title
+		let title = {"title":e.target.options.title, "id":e.target.options.id}
 		if (e.target.options.color === originalColor){
 			// color the marker
 			e.target.options.color = selectedColor
@@ -159,7 +163,7 @@ class Map extends Component {
 			// this.setState(prevState => ({     	
 			// 	selected: prevState.selected.filter(selected => selected !== title)     
 			// }));
-			this.props.setSelectedItem(this.props.ui.selectedItem.filter(selected => selected !== title) )
+			this.props.setSelectedItem(this.props.ui.selectedItem.filter(selected => selected.id !== title.id) )
 		}
 		console.log(this.props.ui.selectedItem)
 	}

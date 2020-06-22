@@ -27,7 +27,7 @@ class SideBar extends Component {
 				<h2>Menu</h2>
 				<h4>Selected monuments</h4>
 				{!this.props.ui.selectedItem.length ? <div>Nothing has been selected </div> : 
-				                              <div>{this.props.ui.selectedItem.map((item) => <p>{item}</p>)}</div>}
+				                              <div>{this.props.ui.selectedItem.map((item) => <p>{item.title}</p>)}</div>}
 				{this.renderNewLayer()}
 			</Accordion>
 		);

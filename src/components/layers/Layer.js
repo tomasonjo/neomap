@@ -218,7 +218,7 @@ class Layer extends Component {
 	updateData() {
 		/*Query database and update `this.state.data`
          */
-		let items = this.props.selectedItem.map((item) => '"' + item + '"')
+		let items = this.props.selectedItem.map((item) => parseInt(item.id))
 
 		console.log(items)
 
@@ -227,7 +227,7 @@ class Layer extends Component {
 		WITH [${items}] as selected
 		UNWIND selected as s
 		MATCH (m:Monument)
-		WHERE m.name = s
+		WHERE id(m) = s
 		RETURN m.location_point.latitude as latitude,
 			   m.location_point.longitude as longitude
 		
