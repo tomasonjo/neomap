@@ -4,6 +4,7 @@
  */
 import React, {Component} from 'react'
 import {connect} from 'react-redux';
+import neo4jService from '../services/neo4jService';
 import L from 'leaflet';
 import 'leaflet.heat';
 import 'leaflet.markercluster';
@@ -12,6 +13,11 @@ import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 
 
 class Map extends Component {
+
+	constructor(props) {
+		super(props);
+		this.driver = props.driver;
+	}
 
 	componentDidMount() {
 		// init an empty map
@@ -25,6 +31,8 @@ class Map extends Component {
 				}),
 			]
 		});
+		console.table(this.state)
+		this.updateStartMarkerLayer();
 
 		this.leafletMarkerLayers = {};
 		this.leafletPolylineLayers = {};
@@ -116,12 +124,18 @@ class Map extends Component {
 		this.map.flyToBounds(globalBounds);
 	}
 
-	updateMarkerLayer(data, color, ukey) {
-		// todo check if the layer has changed before rerendering it
-		this.leafletMarkerLayers[ukey].clearLayers();
+	updateStartMarkerLayer() {
+		const query = `
+		MATCH (n:Monument)
+		RETURN n.location_point.y as latitude, n.location_point.x as longitude, 
+		{name:n.name, url:n.img, architecture:[(n)-[:ARCHITECTURE]->(b) | b.name][0]} as tooltip
+		LIMIT 10000
+		`
 		let m = null;
-		let rgbColor = `rgb(${color.r}, ${color.g}, ${color.b})`;
-		data.forEach(entry => {
+		let rgbColor = "rgb(0, 0, 255)";
+		neo4jService.getData(this.driver, query, {}).then( res => {
+		res.result.forEach(entry => {
+			//console.table(entry)
 			m = L.circleMarker(
 				entry.pos,
 				{
@@ -130,14 +144,18 @@ class Map extends Component {
 					radius: 5,
 					color: rgbColor,
 					fillColor: rgbColor,
-					opacity: color.a,
-					fillOpacity: color.a
+					opacity: 1,
+					fillOpacity: 1
 				}
-			).addTo(this.leafletMarkerLayers[ukey]);
-			if (entry.tooltip !== undefined)
-				m.bindPopup(entry.tooltip);
+			).addTo(this.map);
+			m.bindPopup(`<div>
+							  <p>${entry.tooltip.name}</p>
+							  <p>Architecture style: ${entry.tooltip.architecture}</p>
+							  <img src=${entry.tooltip.url} width=250 height=250/>
+						</div>`);
 		});
-	}
+	})
+}
 
 
 	updatePolylineLayer(data, color, ukey) {

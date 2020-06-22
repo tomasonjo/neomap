@@ -46,7 +46,7 @@ export default {
     }
     else{
       driver = createDriver(
-        process.env.REACT_APP_NEO4J_URI  || "bolt://localhost:768",
+        process.env.REACT_APP_NEO4J_URI  || "bolt://localhost:7687",
         process.env.REACT_APP_NEO4J_USER || "neo4j",
         process.env.REACT_APP_NEO4J_PASS || "neo"
       );
@@ -175,7 +175,7 @@ export default {
             };
             if (record.has("tooltip") && record.get("tooltip") !== null) {
               // make sure tooltip is a string, otherwise leaflet is not happy AT ALL!
-              el["tooltip"] = record.get("tooltip").toString();
+              el["tooltip"] = record.get("tooltip");
             }
             res.push(el);
           });
