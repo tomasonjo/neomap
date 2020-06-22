@@ -12,7 +12,7 @@ class SideBar extends Component {
 	}
 
 	renderNewLayer() {
-		let uid = (new Date().getTime() + Math.random()).toString(36);
+		let uid = "polyline-layer";
 		return (
 			<Layer key={uid} data-id="new-layer" ukey={uid} layer={undefined} sendData={this.sendData}
 				   driver={this.props.driver} selectedItem={this.props.ui.selectedItem}/>

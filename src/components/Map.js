@@ -54,40 +54,13 @@ class Map extends Component {
 		let ukeyClusterArray = [];
 		// Iterate through layers
 		layers.map((layer) => {
-			if (layer.ukey === undefined)
-				return null;
-			let bds = new L.LatLngBounds(layer.bounds);
-			if (bds.isValid())
-				globalBounds.extend(bds);
-			if (layer.rendering === "markers") {
-				ukeyMarkerArray.push(layer.ukey);
-				if (!this.leafletMarkerLayers[layer.ukey]) {
-					this.leafletMarkerLayers[layer.ukey] = L.layerGroup().addTo(this.map);
-				}
-				this.updateMarkerLayer(layer.data, layer.color, layer.ukey);
-			} else if (layer.rendering === "polyline") {
-				ukeyPolylineArray.push(layer.ukey);
-				if (this.leafletPolylineLayers[layer.ukey]) {
-					// todo find a way of updating the polyline layer instead of delete & recreate
-					this.map.removeLayer(this.leafletPolylineLayers[layer.ukey]);
-				}
-				this.updatePolylineLayer(layer.data, layer.color, layer.ukey);
-			} else if (layer.rendering === "heatmap") {
-				ukeyHeatmapArray.push(layer.ukey);
-				if (this.leafletHeatmapLayers[layer.ukey]) {
-					// todo find a way of updating the heat layer instead of delete & recreate
-					this.map.removeLayer(this.leafletHeatmapLayers[layer.ukey]);
-				}
-				this.updateHeatmapLayer(layer.data, layer.radius, layer.ukey);
-			} else if (layer.rendering === "clusters") {
-				ukeyClusterArray.push(layer.ukey);
-				if (!this.leafletClusterLayers[layer.ukey]) {
-					this.leafletClusterLayers[layer.ukey] = L.markerClusterGroup();
-					this.map.addLayer(this.leafletClusterLayers[layer.ukey]);
-				}
-				this.updateClusterLayer(layer.data, layer.color, layer.ukey);
+			ukeyPolylineArray.push(layer.ukey);
+			if (this.leafletPolylineLayers[layer.ukey]) {
+				// todo find a way of updating the polyline layer instead of delete & recreate
+				this.map.removeLayer(this.leafletPolylineLayers[layer.ukey]);
 			}
-			return null;
+			this.updatePolylineLayer(layer.data, layer.color, layer.ukey);
+			
 		});
 		// Check if globalBounds is defined
 		if (!globalBounds.isValid())

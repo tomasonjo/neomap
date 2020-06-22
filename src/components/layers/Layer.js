@@ -218,17 +218,28 @@ class Layer extends Component {
 	updateData() {
 		/*Query database and update `this.state.data`
          */
-		neo4jService.getData(this.driver, this.getQuery(), {}).then( res => {
+		let items = this.props.selectedItem.map((item) => '"' + item + '"')
+
+		console.log(items)
+
+		const query = `
+		
+		WITH [${items}] as selected
+		UNWIND selected as s
+		MATCH (m:Monument)
+		WHERE m.name = s
+		RETURN m.location_point.latitude as latitude,
+			   m.location_point.longitude as longitude
+		
+		`
+
+		neo4jService.getData(this.driver, query, {}).then( res => {
 			if (res.status === "ERROR") {
 				let message = "Invalid cypher query.";
-				if (this.state.layerType !== LAYER_TYPE_CYPHER) {
-					message += "\nContact the development team";
-				} else {
-					message += "\nFix your query and try again";
-				}
 				message += "\n\n" + res.result;
 				alert(message);
 			} else {
+				// Add the new layer
 				this.setState({data: res.result}, function () {
 					this.updateBounds()
 				});
@@ -617,119 +628,6 @@ class Layer extends Component {
 						<Form action="" >
 
 							<h4>Data</h4>
-
-							<Form.Group controlId="formLayerType">
-								<Form.Label>Layer type</Form.Label>
-								<Form.Check
-									type="radio"
-									id={LAYER_TYPE_LATLON}
-									label={"Lat/Lon"}
-									value={LAYER_TYPE_LATLON}
-									checked={this.state.layerType === LAYER_TYPE_LATLON}
-									onChange={this.handleLayerTypeChange}
-									name="layerTypeLatLon"
-								/>
-								<Form.Check
-									type="radio"
-									id={LAYER_TYPE_POINT}
-									label={"Point (neo4j built-in)"}
-									value={LAYER_TYPE_POINT}
-									checked={this.state.layerType === LAYER_TYPE_POINT}
-									onChange={this.handleLayerTypeChange}
-									name="layerTypePoint"
-								/>
-								<Form.Check
-									type="radio"
-									id={LAYER_TYPE_SPATIAL}
-									label={"Point (neo4j-spatial plugin)"}
-									value={LAYER_TYPE_SPATIAL}
-									checked={this.state.layerType === LAYER_TYPE_SPATIAL}
-									onChange={this.handleLayerTypeChange}
-									name="layerTypeSpatial"
-									disabled={!this.state.hasSpatialPlugin}
-									className="beta"
-								/>
-								<Form.Check
-									type="radio"
-									id={LAYER_TYPE_CYPHER}
-									label={"Advanced (cypher query)"}
-									value={LAYER_TYPE_CYPHER}
-									checked={this.state.layerType === LAYER_TYPE_CYPHER}
-									onChange={this.handleLayerTypeChange}
-									name="layerTypeCypher"
-								/>
-							</Form.Group>
-
-							{this.renderConfigDefault()}
-							{this.renderConfigPoint()}
-							{this.renderConfigCypher()}
-							{this.renderConfigSpatial()}
-
-							<h4> > Map rendering</h4>
-
-							<Form.Group controlId="formRendering">
-								<Form.Label>Rendering</Form.Label>
-								<Form.Check
-									type="radio"
-									id={RENDERING_MARKERS}
-									label={"Markers"}
-									value={RENDERING_MARKERS}
-									checked={this.state.rendering === RENDERING_MARKERS}
-									onChange={this.handleRenderingChange}
-									name="mapRenderingMarker"
-								/>
-								<Form.Check
-									type="radio"
-									id={RENDERING_POLYLINE}
-									label={"Polyline"}
-									value={RENDERING_POLYLINE}
-									checked={this.state.rendering === RENDERING_POLYLINE}
-									onChange={this.handleRenderingChange}
-									name="mapRenderingPolyline"
-								/>
-								<Form.Check
-									type="radio"
-									id={RENDERING_HEATMAP}
-									label={"Heatmap"}
-									value={RENDERING_HEATMAP}
-									checked={this.state.rendering === RENDERING_HEATMAP}
-									onChange={this.handleRenderingChange}
-									name="mapRenderingHeatmap"
-									className="beta"
-								/>
-								<Form.Check
-									type="radio"
-									id={RENDERING_CLUSTERS}
-									label={"Clusters"}
-									value={RENDERING_CLUSTERS}
-									checked={this.state.rendering === RENDERING_CLUSTERS}
-									onChange={this.handleRenderingChange}
-									name="mapRenderingCluster"
-									className="beta"
-								/>
-							</Form.Group>
-
-							<Form.Group controlId="formRadius" hidden={this.state.rendering !== RENDERING_HEATMAP} >
-								<Form.Label>Heatmap radius</Form.Label>
-								<Form.Control
-									type="range"
-									min="1"
-									max="100"
-									defaultValue={this.state.radius}
-									className="slider"
-									onChange={this.handleRadiusChange}
-									name="radius"
-								/>
-							</Form.Group>
-
-
-							<Button variant="danger" type="submit"  onClick={this.deleteLayer} hidden={this.props.layer === undefined}>
-								Delete Layer
-							</Button>
-
-							<Button variant="info" type="submit"  onClick={this.showQuery} hidden={this.state.layerType === LAYER_TYPE_CYPHER}>
-								Show query
-							</Button>
 
 							<Button variant="success" type="submit"  onClick={this.sendData} >
 								Update map
