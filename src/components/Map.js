@@ -17,6 +17,10 @@ class Map extends Component {
 	constructor(props) {
 		super(props);
 		this.driver = props.driver;
+
+		this.state = {
+			selected: []
+		};
 	}
 
 	componentDidMount() {
@@ -31,9 +35,7 @@ class Map extends Component {
 				}),
 			]
 		});
-		console.table(this.state)
 		this.updateStartMarkerLayer();
-
 		this.leafletMarkerLayers = {};
 		this.leafletPolylineLayers = {};
 		this.leafletHeatmapLayers = {};
@@ -139,7 +141,7 @@ class Map extends Component {
 			m = L.circleMarker(
 				entry.pos,
 				{
-					title: entry.tooltip,
+					title: entry.tooltip.name,
 					fill: true,
 					radius: 5,
 					color: rgbColor,
@@ -147,7 +149,7 @@ class Map extends Component {
 					opacity: 1,
 					fillOpacity: 1
 				}
-			).addTo(this.map);
+			).addTo(this.map).on("click", this.circleClick.bind(this));
 			m.bindPopup(`<div>
 							  <p>${entry.tooltip.name}</p>
 							  <p>Architecture style: ${entry.tooltip.architecture}</p>
@@ -157,6 +159,32 @@ class Map extends Component {
 	})
 }
 
+	circleClick(e){
+		
+		const originalColor = "rgb(0, 0, 255)"
+		const selectedColor = "rgb(255, 0, 0)"
+
+		let title = e.target.options.title
+		if (e.target.options.color === originalColor){
+			// color the marker
+			e.target.options.color = selectedColor
+			e.target.options.fillColor = selectedColor
+			// add the selected monument to state
+			this.setState(prevState => ({
+				selected: [...prevState.selected, title]
+			  }))
+		}
+		else{
+			// color the marker
+			e.target.options.color = originalColor
+			e.target.options.fillColor = originalColor
+			// remove the selected monument from state
+			this.setState(prevState => ({     	
+				selected: prevState.selected.filter(selected => selected !== title)     
+			}));
+		}
+		console.log(this.state.selected)
+	}
 
 	updatePolylineLayer(data, color, ukey) {
 		// todo check if the layer has changed before rerendering it
