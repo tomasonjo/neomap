@@ -5,21 +5,29 @@ import Layer from './layers/Layer';
 
 class SideBar extends Component {
 
+	constructor(props) {
+		super(props);
+		this.props.ui.selectedItem = [];
+
+	}
+
 	renderNewLayer() {
 		let uid = (new Date().getTime() + Math.random()).toString(36);
 		return (
 			<Layer key={uid} data-id="new-layer" ukey={uid} layer={undefined} sendData={this.sendData}
-				   driver={this.props.driver}/>
+				   driver={this.props.driver} selectedItem={this.props.ui.selectedItem}/>
 		);
 	};
 
 
 
 	render() {
-		console.log(this.props)
 		return (
 			<Accordion>
-				<button onClick={() => console.table(this.props)} />
+				<h2>Menu</h2>
+				<h4>Selected monuments</h4>
+				{!this.props.ui.selectedItem.length ? <div>Nothing has been selected </div> : 
+				                              <div>{this.props.ui.selectedItem.map((item) => <p>{item}</p>)}</div>}
 				{this.renderNewLayer()}
 			</Accordion>
 		);
