@@ -5,6 +5,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux';
 import neo4jService from '../services/neo4jService';
+
 import L from 'leaflet';
 import 'leaflet.heat';
 import 'leaflet.markercluster';
@@ -123,7 +124,7 @@ class Map extends Component {
 			delete this.leafletClusterLayers[key];
 			return null;
 		});
-		this.map.flyToBounds(globalBounds);
+		//this.map.flyToBounds(globalBounds);
 	}
 
 	updateStartMarkerLayer() {

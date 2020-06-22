@@ -21,7 +21,6 @@ import "codemirror/lib/codemirror.css";
 import "codemirror/addon/lint/lint.css";
 import "codemirror/addon/hint/show-hint.css";
 import "cypher-codemirror/dist/cypher-codemirror-syntax.css";
-import ColorPicker from "../ColorPicker";
 
 
 // maximum number of points to show
@@ -604,7 +603,6 @@ class Layer extends Component {
 
 			<Card>
 
-				<Accordion.Toggle as={Card.Header} eventKey={this.state.ukey} >
 					<h3>{this.state.name}
 						<small hidden>({this.state.ukey})</small>
 						<span
@@ -612,28 +610,13 @@ class Layer extends Component {
 							style={{background: color, float: 'right', height: '20px', width: '50px'}}> 
 						</span>
 					</h3>
-				</Accordion.Toggle>
 
-				<Accordion.Collapse eventKey={this.state.ukey} >
 
 					<Card.Body>
 
 						<Form action="" >
 
-							<Form.Group controlId="formLayerName">
-								<Form.Label>Name</Form.Label>
-								<Form.Control
-									type="text"
-									className="form-control"
-									placeholder="Layer name"
-									defaultValue={this.state.name}
-									onChange={this.handleNameChange}
-									name="name"
-								/>
-							</Form.Group>
-
-
-							<h4>  > Data</h4>
+							<h4>Data</h4>
 
 							<Form.Group controlId="formLayerType">
 								<Form.Label>Layer type</Form.Label>
@@ -726,16 +709,6 @@ class Layer extends Component {
 								/>
 							</Form.Group>
 
-							<Form.Group controlId="formColor"
-										hidden={this.state.rendering === RENDERING_HEATMAP}
-										name="formgroupColor">
-								<Form.Label>Color</Form.Label>
-								<ColorPicker
-									color={ this.state.color }
-									handleColorChange={this.handleColorChange}
-								/>
-							</Form.Group>
-
 							<Form.Group controlId="formRadius" hidden={this.state.rendering !== RENDERING_HEATMAP} >
 								<Form.Label>Heatmap radius</Form.Label>
 								<Form.Control
@@ -765,7 +738,6 @@ class Layer extends Component {
 						</Form>
 					</Card.Body>
 
-				</Accordion.Collapse>
 
 			</Card>
 

@@ -1,16 +1,23 @@
 import React, {Component} from 'react';
-import LayersList from './layers/LayersList';
-
+import Accordion from 'react-bootstrap/Accordion';
+import Layer from './layers/Layer';
+import {connect} from 'react-redux';
 
 class SideBar extends Component {
 
-	// TODO: move menu bar here or consider removing this component
+	renderNewLayer() {
+		let uid = (new Date().getTime() + Math.random()).toString(36);
+		return (
+			<Layer key={uid} data-id="new-layer" ukey={uid} layer={undefined} sendData={this.sendData}
+				   driver={this.props.driver}/>
+		);
+	};
 
 	render() {
 		return (
-			<LayersList
-				driver={this.props.driver}
-			/>
+			<Accordion>
+				{this.renderNewLayer()}
+			</Accordion>
 		);
 	};
 }
